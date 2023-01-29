@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using MinimalApiDemo.Infastructure;
 using MinimalApiDemo.Models;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("api"));
@@ -28,6 +30,7 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = string.Empty;
 });
 
+// Controllers
 app.MapGet("/", () => "Hello World!");
 
 app.MapGet("/articles", async (
@@ -45,10 +48,13 @@ app.MapGet("/articles/{id}", async(
 
 app.MapPost("/articles", async (ArticleRequest article, ApiContext context) =>
 {
+    var title = String.IsNullOrEmpty(article.Title) ? "Default Title" : article.Title;
+    var content = String.IsNullOrEmpty(article.Content) ? "Default Content" : article.Content;
+
     var newArticle = new Article
     {
-        Title = article.Title ?? string.Empty,
-        Content = article.Content ?? string.Empty,
+        Title = title,
+        Content = content,
         PublishedAt = article.PublishedAt ?? DateTime.Now
     };
 
@@ -96,5 +102,6 @@ app.MapPut("/articles/{id}", async (int id, ArticleRequest article, ApiContext c
     return Results.Ok(articleToUpdate);
 });
 
+// Starting point
 app.Run();
 
