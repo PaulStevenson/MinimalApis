@@ -1,9 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using MinimalApiDemo.Infastructure;
 using MinimalApiDemo.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("api"));
+
 var app = builder.Build();
+
+{
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+}
+
+app.UseHttpsRedirection();
+
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    options.RoutePrefix = string.Empty;
+});
 
 app.MapGet("/", () => "Hello World!");
 
@@ -11,7 +34,6 @@ app.MapGet("/articles", async (
     ApiContext context) => Results.Ok(
         await context.Articles.ToListAsync())
     );
-
 app.MapGet("/articles/{id}", async(
     int id,
     ApiContext context) =>
