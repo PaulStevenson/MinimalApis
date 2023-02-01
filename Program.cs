@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using MinimalApiDemo.Infastructure;
 using MinimalApiDemo.Models;
+using MinimalApiDemo.Services;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("api"));
+
+// IoC Reg
+builder.Services.AddScoped<IArticleService, ArticleService>();
 
 var app = builder.Build();
 
@@ -34,9 +38,10 @@ app.UseSwaggerUI(options =>
 app.MapGet("/", () => "Hello World!");
 
 app.MapGet("/articles", async (
-    ApiContext context) => Results.Ok(
-        await context.Articles.ToListAsync())
+    IArticleService articleService) => 
+        await articleService.GetAll()
     );
+
 app.MapGet("/articles/{id}", async(
     int id,
     ApiContext context) =>
