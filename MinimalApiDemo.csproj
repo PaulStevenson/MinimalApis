@@ -19,6 +19,7 @@
     <None Remove="Swashbuckle.AspNetCore" />
     <None Remove="Microsoft.Extensions.DependencyInjection" />
     <None Remove="Services\" />
+    <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -33,5 +34,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
   </ItemGroup>
 </Project>
