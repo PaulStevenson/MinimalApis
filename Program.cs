@@ -13,6 +13,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region Register Services
 // Register services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -69,11 +70,14 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+#endregion
 
-// IoC Reg
+#region IOC
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<ILoginInService, LoginService>();
+#endregion
 
+#region App Builder
 var app = builder.Build();
 
 {
@@ -94,12 +98,13 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
     options.RoutePrefix = string.Empty;
 });
+#endregion
 
-// Endpoints Articles
+#region Article Endpoints
 app.MapGet("/articles", async (
-    IArticleService articleService) => 
+IArticleService articleService) =>
 await articleService.GetAll())
-    .RequireAuthorization();
+.RequireAuthorization();
 
 app.MapGet("/articles/{id}", async (
     int id,
@@ -125,12 +130,14 @@ app.MapPut("/articles/{id}", async (
     IArticleService articleService) =>
 await articleService.Put(id, article))
     .RequireAuthorization();
+#endregion
 
-// Endpoints Login
+#region Login Endpoints
 app.MapPost("/login", (
-    Login user,
-    ILoginInService loginInService) =>
-loginInService.Login(user)); 
+Login user,
+ILoginInService loginInService) =>
+loginInService.Login(user));
+#endregion
 
 // Starting point
 app.Run();
