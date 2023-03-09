@@ -18,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("api"));
+builder.Services.AddAutoMapper(typeof(Program));
 
 // JWT Set Up
 builder.Services.AddAuthentication(opt =>
@@ -110,26 +111,27 @@ app.MapGet("/articles/{id}", async (
     int id,
     IArticleService articleService) =>
 await articleService.GetById(id))
-    .RequireAuthorization();
+.RequireAuthorization();
 
 app.MapPost("/articles", async (
     ArticleRequest article,
     IArticleService articleService) =>
 await articleService.Post(article))
-    .RequireAuthorization();
+.RequireAuthorization();
 
 app.MapDelete("articles/{id}", async (
     int id,
     IArticleService articleService) =>
 await articleService.Delete(id))
-    .RequireAuthorization();
+.RequireAuthorization();
 
 app.MapPut("/articles/{id}", async (
     int id,
     ArticleRequest article,
     IArticleService articleService) =>
 await articleService.Put(id, article))
-    .RequireAuthorization();
+.RequireAuthorization();
+
 #endregion
 
 #region Login Endpoints

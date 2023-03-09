@@ -1,5 +1,7 @@
 ﻿using System;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MinimalApiDemo.Entities;
 using MinimalApiDemo.Infastructure;
 using MinimalApiDemo.Models;
 
@@ -8,39 +10,44 @@ namespace MinimalApiDemo.Services
 	public class ArticleService : IArticleService
     {
         private readonly ApiContext _context;
+        private readonly IMapper _mapper;
 
-        public ArticleService(ApiContext context)
+        public ArticleService(ApiContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IResult> GetAll()
         {
-            var articles = await _context.Articles.ToListAsync();
+            var entities = await _context.Articles.ToListAsync();
+            var results = _mapper.Map<IList<Article>>(entities);
 
-            return Results.Ok(articles);
+            return Results.Ok(results);
         }
 
         public async Task<IResult> GetById(int id)
         {
-            var article = await _context.Articles.FindAsync(id);
+            var articleEntity = await _context.Articles.FindAsync(id);
+            var result = _mapper.Map<Article>(articleEntity);
 
-            return article != null ? Results.Ok(article) : Results.NotFound();
+            return result != null ? Results.Ok(result) : Results.NotFound();
         }
 
         public async Task<IResult> Post(ArticleRequest article)
         {
             var title = String.IsNullOrEmpty(article.Title) ? "Default Title" : article.Title;
-            var content = String.IsNullOrEmpty(article.Content) ? "Default Content" : article.Content;
 
             var newArticle = new Article
             {
                 Title = title,
-                Content = content,
+                Content = article.Content,
                 PublishedAt = article.PublishedAt ?? DateTime.Now
             };
 
-            var createdArticle = _context.Articles.Add(newArticle);
+            var entity = _mapper.Map<ArticleEntity>(newArticle);
+
+            var createdArticle = _context.Articles.Add(entity);
 
             await _context.SaveChangesAsync();
 

@@ -7,15 +7,15 @@ namespace MinimalApiDemo.Models
 	{
 		public int Id { get; set; }
 
-		[Required]
 		public string? Title { get; set; }
 
-		[Required]
 		public string? Content { get; set; }
 
 		public DateTime? PublishedAt { get; set; }
+
+		public int MyNumber { get; set; }
 	}
 
-    public record ArticleRequest(string? Title, string? Content, DateTime? PublishedAt);
+    public record ArticleRequest(string? Title, string? Content, DateTime? PublishedAt, int myNum);
 }
 
