@@ -6,10 +6,15 @@ using MinimalApiDemo.Models;
 namespace MinimalApiDemo.Infastructure
 {
 	public class ApiContext : DbContext
-	{
+    {
+		public ApiContext()
+		{
+
+		}
+
 		public ApiContext(DbContextOptions<ApiContext> options): base(options){}
 
-		public DbSet<ArticleEntity> Articles { get; set; }
+		public virtual DbSet<ArticleEntity> Articles { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
