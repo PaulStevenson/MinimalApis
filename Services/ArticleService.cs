@@ -26,12 +26,12 @@ namespace MinimalApiDemo.Services
             return Results.Ok(results);
         }
 
-        public async Task<IResult> GetById(int id)
+        public async Task<Article> GetById(int id)
         {
             var articleEntity = await _context.Articles.FindAsync(id);
             var result = _mapper.Map<Article>(articleEntity);
 
-            return result != null ? Results.Ok(result) : Results.NotFound();
+            return result;
         }
 
         public async Task<IResult> Post(ArticleRequest article)
@@ -42,7 +42,8 @@ namespace MinimalApiDemo.Services
             {
                 Title = title,
                 Content = article.Content,
-                PublishedAt = article.PublishedAt ?? DateTime.Now
+                PublishedAt = article.PublishedAt,
+                MyNumber = article.MyNumber
             };
 
             var entity = _mapper.Map<ArticleEntity>(newArticle);

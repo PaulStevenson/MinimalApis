@@ -7,7 +7,7 @@ namespace MinimalApiDemo.Services
 	{
         Task<IResult> GetAll();
 
-		Task<IResult> GetById(int id);
+		Task<Article> GetById(int id);
 
 		Task<IResult> Post(ArticleRequest article);
 

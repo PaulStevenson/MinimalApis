@@ -110,11 +110,13 @@ await articleService.GetAll())
 app.MapGet("/articles/{id}", async (
     int id,
     IArticleService articleService) =>
-await articleService.GetById(id))
+await articleService.GetById(id) is Article article
+? Results.Ok(article)
+: Results.NotFound())
 .RequireAuthorization();
 
 app.MapPost("/articles", async (
-    ArticleRequest article,
+    [FromBody] ArticleRequest article,
     IArticleService articleService) =>
 await articleService.Post(article))
 .RequireAuthorization();
