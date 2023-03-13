@@ -5,6 +5,8 @@ VisualStudioVersion = 25.0.1704.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApiDemo", "MinimalApiDemo.csproj", "{C3308D3E-5993-469C-A504-793F2926FE6A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MinimalApi", "MinimalApi", "{F4ED0CEB-B456-45EE-8D7A-903696047231}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,5 +23,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6755044D-3D4A-42BA-8146-DB715D9653BF}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C3308D3E-5993-469C-A504-793F2926FE6A} = {F4ED0CEB-B456-45EE-8D7A-903696047231}
 	EndGlobalSection
 EndGlobal
