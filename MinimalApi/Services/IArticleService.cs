@@ -5,7 +5,7 @@ namespace MinimalApiDemo.Services
 {
 	public interface IArticleService
 	{
-        Task<IResult> GetAll();
+        Task<IList<Article>> GetAll();
 
 		Task<Article> GetById(int id);
 

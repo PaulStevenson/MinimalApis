@@ -1,21 +1,11 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using MinimalApiDemo.Entities;
-using MinimalApiDemo.Infastructure;
-using MinimalApiDemo.Models;
-using MinimalApiDemo.Services;
-using Moq;
-using MockQueryable;
-using MockQueryable.Moq;
-using FluentAssertions;
-using Microsoft.AspNetCore.Http.HttpResults;
-
-namespace UnitTests;
+﻿namespace UnitTests;
 
 public class ArticleServiceTests
 {
     private readonly Mock<ApiContext> _mockApiContext = new Mock<ApiContext>();
     private readonly Mock<IMapper> _mockMapper = new Mock<IMapper>();
+
+    #region GetByID Tests
 
     [Fact]
     public async Task GetById_Exists_ReturnsDto()
@@ -31,7 +21,7 @@ public class ArticleServiceTests
 
         mockEnt
             .Setup(x => x.FindAsync(1))
-            .ReturnsAsync(entList
+            .ReturnsAsync(entList.ToList()
             .Find(e => e.Id == 1));
 
         _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
@@ -62,7 +52,7 @@ public class ArticleServiceTests
 
         mockEnt
             .Setup(x => x.FindAsync(1))
-            .ReturnsAsync(entList
+            .ReturnsAsync(entList.ToList()
             .Find(e => e.Id == 10));
 
         _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
@@ -80,8 +70,62 @@ public class ArticleServiceTests
         _mockMapper.Verify(m => m.Map<Article>(firstEntity), Times.Never());
         _mockApiContext.Verify(c => c.Articles.FindAsync(1), Times.Once());
     }
+    #endregion
 
-    private List<ArticleEntity> GetTestEntities(int index, int count)
+    [Fact]
+    public async Task GetAll_Exists_ReturnsListOfDtos()
+    {
+        // assert
+        var dtos = GetTestDtos(1, 6);
+
+        var entList = GetTestEntities(1, 6);
+
+        var mockEnt = entList.AsQueryable().BuildMockDbSet();
+
+        _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
+
+        _mockMapper.Setup(x => x.Map<IList<Article>>(entList)).Returns(dtos);
+
+        var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
+
+        // act
+        var result = await service.GetAll();
+
+        // assert
+        result.Should().NotBeNull();
+        result.Count().Should().Be(5);
+        result.Should().BeOfType<List<Article>>();
+
+        result.Should().BeSameAs(dtos);
+
+        _mockMapper.Verify(m => m.Map<IList<Article>>(entList), Times.Once());
+    }
+
+
+    [Fact]
+    public async Task GetAll_NoneExist_ReturnsEmptyList()
+    {
+        // assert
+        var entList = new List<ArticleEntity>();
+
+        var mockEnt = entList.AsQueryable().BuildMockDbSet();
+
+        _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
+
+        _mockMapper.Setup(x => x.Map<IList<Article>>(It.IsAny<ArticleEntity>)).Returns(() => null);
+
+        var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
+
+        // act
+        var result = await service.GetAll();
+
+        // assert
+        result.Should().BeNull();
+
+        _mockMapper.Verify(m => m.Map<IList<Article>>(It.IsAny<ArticleEntity>), Times.Never());
+    }
+
+    private IList<ArticleEntity> GetTestEntities(int index, int count)
     {
         var entList = new List<ArticleEntity>();
 
@@ -102,7 +146,7 @@ public class ArticleServiceTests
         return entList;
     }
 
-    private List<Article> GetTestDtos(int index, int count)
+    private IList<Article> GetTestDtos(int index, int count)
     {
         var entList = new List<Article>();
 

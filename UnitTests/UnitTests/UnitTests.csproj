@@ -32,4 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\MinimalApi\MinimalApiDemo.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\.editorconfig" />
+  </ItemGroup>
 </Project>

@@ -18,12 +18,12 @@ namespace MinimalApiDemo.Services
             _mapper = mapper;
         }
 
-        public async Task<IResult> GetAll()
+        public async Task<IList<Article>> GetAll()
         {
             var entities = await _context.Articles.ToListAsync();
             var results = _mapper.Map<IList<Article>>(entities);
 
-            return Results.Ok(results);
+            return results;
         }
 
         public async Task<Article> GetById(int id)
