@@ -34,7 +34,7 @@ namespace MinimalApiDemo.Services
             return result;
         }
 
-        public async Task<IResult> Post(ArticleRequest article)
+        public async Task<Article> Post(ArticleRequest article)
         {
             var title = String.IsNullOrEmpty(article.Title) ? "Default Title" : article.Title;
 
@@ -52,7 +52,9 @@ namespace MinimalApiDemo.Services
 
             await _context.SaveChangesAsync();
 
-            return Results.Created($"articles/{createdArticle.Entity.Id}", createdArticle.Entity);
+            var response = _mapper.Map<Article>(createdArticle.Entity);
+
+            return response;
         }
 
         public async Task<IResult> Delete(int id)

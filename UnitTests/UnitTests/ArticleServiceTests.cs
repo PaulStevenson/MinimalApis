@@ -1,4 +1,8 @@
-﻿namespace UnitTests;
+﻿using Microsoft.EntityFrameworkCore;
+using MinimalApiDemo.Profiles;
+using Moq;
+
+namespace UnitTests;
 
 public class ArticleServiceTests
 {
@@ -10,7 +14,7 @@ public class ArticleServiceTests
     [Fact]
     public async Task GetById_Exists_ReturnsDto()
     {
-        // assert
+        // arrange
         var dtos = GetTestDtos(1, 6);
         var expected = dtos.First();
 
@@ -44,7 +48,7 @@ public class ArticleServiceTests
     [Fact]
     public async Task GetById_DoesNotExists_ReturnsNull()
     {
-        // assert
+        // arrange
         var entList = GetTestEntities(1, 6);
         var firstEntity = entList.First();
 
@@ -72,10 +76,12 @@ public class ArticleServiceTests
     }
     #endregion
 
+    #region GetAll Test
+
     [Fact]
     public async Task GetAll_Exists_ReturnsListOfDtos()
     {
-        // assert
+        // arrange
         var dtos = GetTestDtos(1, 6);
 
         var entList = GetTestEntities(1, 6);
@@ -105,7 +111,7 @@ public class ArticleServiceTests
     [Fact]
     public async Task GetAll_NoneExist_ReturnsEmptyList()
     {
-        // assert
+        // arrange
         var entList = new List<ArticleEntity>();
 
         var mockEnt = entList.AsQueryable().BuildMockDbSet();
@@ -124,6 +130,44 @@ public class ArticleServiceTests
 
         _mockMapper.Verify(m => m.Map<IList<Article>>(It.IsAny<ArticleEntity>), Times.Never());
     }
+    #endregion
+
+    [Fact]
+    public async Task Post_ReturnsNewArticle()
+    {
+        var dto = GetTestDtos(1, 2).First();
+
+        var articleRequest = new ArticleRequest(
+
+            dto.Title,
+            dto.Content,
+            dto.PublishedAt,
+            dto.MyNumber
+        );
+
+        var mapper = MappingProfile();
+
+        var dbContextOptions = SetUpDbContext();
+
+        using (var dbContext = new ApiContext(dbContextOptions))
+        {
+            var articleController = new ArticleService(dbContext, mapper);
+
+            // Act
+            var result = await articleController.Post(articleRequest);
+
+            // Assert
+            result.Should().BeOfType<Article>();
+            result.Should().BeEquivalentTo(dto);
+            result.Id.Should().Be(1);
+            result.Title.Should().Be(dto.Title);
+            result.Content.Should().Be(dto.Content);
+            result.PublishedAt.Should().Be(dto.PublishedAt);
+            result.MyNumber.Should().Be(dto.MyNumber);
+        }
+    }
+
+    #region Private Methods
 
     private IList<ArticleEntity> GetTestEntities(int index, int count)
     {
@@ -166,4 +210,21 @@ public class ArticleServiceTests
 
         return entList;
     }
+
+    private static IMapper MappingProfile()
+    {
+        var mc = new MapperConfiguration(c =>
+        c.AddProfile(new ArticleProfile()));
+
+        var m = mc.CreateMapper();
+        return m;
+    }
+
+    private static DbContextOptions<ApiContext> SetUpDbContext()
+    {
+        return new DbContextOptionsBuilder<ApiContext>()
+            .UseInMemoryDatabase(databaseName: "MyDatabase")
+        .Options;
+    }
+    #endregion
 }

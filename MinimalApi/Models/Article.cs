@@ -16,7 +16,7 @@ namespace MinimalApiDemo.Models
 		public int? MyNumber { get; set; }
 	}
 
-    public record ArticleRequest(string Title, string Content, DateTime PublishedAt, int MyNumber);
+    public record ArticleRequest(string Title, string Content, DateTime? PublishedAt, int? MyNumber);
 
 
 }
