@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MinimalApiDemo.Infastructure;
 using MinimalApiDemo.Models;
 using MinimalApiDemo.Services;
-using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

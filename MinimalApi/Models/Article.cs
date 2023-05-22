@@ -1,9 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace MinimalApiDemo.Models
+﻿namespace MinimalApiDemo.Models
 {
-	public class Article
+    public class Article
 	{
 		public int Id { get; set; }
 

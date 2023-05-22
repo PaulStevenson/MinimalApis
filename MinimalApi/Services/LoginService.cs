@@ -1,18 +1,13 @@
-﻿using System;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
+using MinimalApiDemo.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MinimalApiDemo.Models;
 
 namespace MinimalApiDemo.Services
 {
-	public class LoginService : ILoginInService
+    public class LoginService : ILoginInService
 	{
-		public LoginService()
-		{
-		}
-
 		public IResult Login(Login user)
 		{
 			if (user is null)
