@@ -104,8 +104,8 @@ app.UseSwaggerUI(options =>
 #region Article Endpoints
 app.MapGet("/articles", async (
 IArticleService articleService) =>
-await articleService.GetAll())
-.RequireAuthorization();
+await articleService.GetAll());
+//.RequireAuthorization();
 
 app.MapGet("/articles/{id}", async (
     int id,
@@ -118,8 +118,8 @@ await articleService.GetById(id) is Article article
 app.MapPost("/articles", async (
     [FromBody] ArticleRequest article,
     IArticleService articleService) =>
-await articleService.Post(article))
-.RequireAuthorization();
+await articleService.Post(article));
+//.RequireAuthorization();
 
 app.MapPost("/articlesWithValidation", async (
     Article article) =>

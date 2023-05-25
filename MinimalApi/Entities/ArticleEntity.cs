@@ -14,8 +14,8 @@ namespace MinimalApiDemo.Entities
 
         public string Content { get; set; }
 
-        public DateTime? PublishedAt { get; set; }
+        public DateTime PublishedAt { get; set; }
 
-        public int? MyNumber { get; set; }
+        public int MyNumber { get; set; }
 	}
 }

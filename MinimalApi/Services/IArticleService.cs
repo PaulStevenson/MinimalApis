@@ -9,7 +9,7 @@ namespace MinimalApiDemo.Services
 
 		Task<Article> GetById(int id);
 
-		Task<IResult> Post(ArticleRequest article);
+        Task<Article> Post(ArticleRequest article);
 
 		Task<IResult> PostWithValidation(Article newArticle);
 

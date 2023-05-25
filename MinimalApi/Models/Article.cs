@@ -8,9 +8,9 @@
 
 		public string Content { get; set; }
 
-		public DateTime? PublishedAt { get; set; }
+		public DateTime PublishedAt { get; set; }
 
-		public int? MyNumber { get; set; }
+		public int MyNumber { get; set; }
 	}
 
     public record ArticleRequest(string Title, string Content, DateTime PublishedAt, int MyNumber);
