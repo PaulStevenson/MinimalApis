@@ -112,8 +112,8 @@ app.MapGet("/articles/{id}", async (
     IArticleService articleService) =>
 await articleService.GetById(id) is Article article
 ? Results.Ok(article)
-: Results.NotFound())
-.RequireAuthorization();
+: Results.NotFound());
+//.RequireAuthorization();
 
 app.MapPost("/articles", async (
             [FromBody] ArticleRequest article,
@@ -154,4 +154,6 @@ loginInService.Login(user));
 
 // Starting point
 app.Run();
+
+public partial class Program { }
 
