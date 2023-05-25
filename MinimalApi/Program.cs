@@ -121,26 +121,11 @@ app.MapPost("/articles", async (
 await articleService.Post(article));
 //.RequireAuthorization();
 
-app.MapPost("/articlesWithValidation", async (
+app.MapPost("/articlesWithValidation",  (
     Article article) =>
 {
     return Results.Ok("Cool");
-}).AddEndpointFilter(async (context, next) =>
-{
-    var article = context.Arguments[0] as Article;
-    var validator = context.HttpContext.RequestServices.GetService<ArticleValidator>();
-    if (validator != null && article != null)
-    {
-        var validation = await validator.ValidateAsync(article);
-        if (validation.IsValid)
-        {
-            return await next(context);
-        }
-
-        return Results.ValidationProblem(validation.ToDictionary());
-    }
-    return await next(context);
-});
+}).AddEndpointFilter<ValidationFilter<Article>>();
 
 app.MapDelete("articles/{id}", async (
     int id,
