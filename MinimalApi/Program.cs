@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MinimalApiDemo.Infastructure;
 using MinimalApiDemo.Models;
 using MinimalApiDemo.Services;
-using System;
+using MinimalApiDemo.Validation;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("api"));
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(MinimalApiDemo.Validation.Validators));
 
 // JWT Set Up
 builder.Services.AddAuthentication(opt =>
@@ -116,23 +116,32 @@ await articleService.GetById(id) is Article article
 .RequireAuthorization();
 
 app.MapPost("/articles", async (
-    [FromBody] ArticleRequest article,
-    IArticleService articleService) =>
-await articleService.Post(article));
-//.RequireAuthorization();
+            [FromBody] ArticleRequest article,
+            IArticleService articleService) =>
+        await articleService.Post(article))
+    .AddEndpointFilter<ValidationFilter<ArticleRequest>>();
+    //.RequireAuthorization();
+
+app.MapPost("/articlesWithValidation",  (
+    Article article) =>
+{
+    return Results.Ok("Cool");
+})
+    .AddEndpointFilter<ValidationFilter<Article>>();
 
 app.MapDelete("articles/{id}", async (
     int id,
     IArticleService articleService) =>
 await articleService.Delete(id))
-.RequireAuthorization();
+    .RequireAuthorization();
 
 app.MapPut("/articles/{id}", async (
     int id,
     ArticleRequest article,
     IArticleService articleService) =>
 await articleService.Put(id, article))
-.RequireAuthorization();
+    .AddEndpointFilter<ValidationFilter<ArticleRequest>>()
+    .RequireAuthorization();
 
 #endregion
 
