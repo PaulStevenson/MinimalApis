@@ -1,12 +1,11 @@
-﻿global using Xunit;
-global using AutoMapper;
+﻿global using AutoMapper;
+global using FluentAssertions;
 global using Microsoft.EntityFrameworkCore;
 global using MinimalApiDemo.Entities;
 global using MinimalApiDemo.Infastructure;
 global using MinimalApiDemo.Models;
+global using MinimalApiDemo.Profiles;
 global using MinimalApiDemo.Services;
-global using Moq;
-global using MockQueryable;
 global using MockQueryable.Moq;
-global using FluentAssertions;
-global using Microsoft.AspNetCore.Http.HttpResults;
+global using Moq;
+global using Xunit;

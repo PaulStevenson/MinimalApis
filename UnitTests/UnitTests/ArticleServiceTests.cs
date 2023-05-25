@@ -1,10 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using MinimalApiDemo.Profiles;
-using Moq;
-using Moq.EntityFrameworkCore;
-
-namespace UnitTests;
+﻿namespace UnitTests;
 
 public class ArticleServiceTests : IDisposable
 {
@@ -18,7 +12,7 @@ public class ArticleServiceTests : IDisposable
         //Creates a new DB each time using a different name
         var options = new DbContextOptionsBuilder<ApiContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-        .Options;
+            .Options;
 
         _context = new ApiContext(options);
 
@@ -45,164 +39,129 @@ public class ArticleServiceTests : IDisposable
         _context.SaveChanges();
     }
 
-    //#region GetByID Tests
+    #region GetByID Tests
 
-    //[Fact]
-    //public async Task GetById_Exists_ReturnsDto()
-    //{
-    //    // arrange
-    //    var dtos = GetTestDtos(1, 6);
-    //    var expected = dtos.First();
+    [Fact]
+    public async Task GetById_Exists_ReturnsDto()
+    {
+        // arrange
+        var dtos = GetTestDtos(1, 6);
+        var expected = dtos.First();
 
-    //    var entList = GetTestEntities(1, 6);
-    //    var firstEntity = entList.First();
+        var entList = GetTestEntities(1, 6);
+        var firstEntity = entList.First();
 
-    //    var mockEnt = entList.BuildMock().BuildMockDbSet();
+        var mockEnt = entList.BuildMock().BuildMockDbSet();
 
-    //    mockEnt
-    //        .Setup(x => x.FindAsync(1))
-    //        .ReturnsAsync(entList.ToList()
-    //        .Find(e => e.Id == 1));
+        mockEnt
+            .Setup(x => x.FindAsync(1))
+            .ReturnsAsync(entList.ToList()
+            .Find(e => e.Id == 1));
 
-    //    _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
+        _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
 
-    //    _mockMapper.Setup(x => x.Map<Article>(firstEntity)).Returns(expected);
+        _mockMapper.Setup(x => x.Map<Article>(firstEntity)).Returns(expected);
 
-    //    var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
+        var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
 
-    //    // act
-    //    var result = await service.GetById(1);
+        // act
+        var result = await service.GetById(1);
 
-    //    // assert
-    //    result.Should().NotBeNull();
-    //    result.Should().BeOfType<Article>();
+        // assert
+        result.Should().NotBeNull();
+        result.Should().BeOfType<Article>();
 
-    //    _mockMapper.Verify(m => m.Map<Article>(firstEntity), Times.Once());
-    //    _mockApiContext.Verify(c => c.Articles.FindAsync(1), Times.Once());
-    //}
+        _mockMapper.Verify(m => m.Map<Article>(firstEntity), Times.Once());
+        _mockApiContext.Verify(c => c.Articles.FindAsync(1), Times.Once());
+    }
 
-    //[Fact]
-    //public async Task GetById_DoesNotExists_ReturnsNull()
-    //{
-    //    // arrange
-    //    var entList = GetTestEntities(1, 6);
-    //    var firstEntity = entList.First();
+    [Fact]
+    public async Task GetById_DoesNotExists_ReturnsNull()
+    {
+        // arrange
+        var entList = GetTestEntities(1, 6);
+        var firstEntity = entList.First();
 
-    //    var mockEnt = entList.BuildMock().BuildMockDbSet();
+        var mockEnt = entList.BuildMock().BuildMockDbSet();
 
-    //    mockEnt
-    //        .Setup(x => x.FindAsync(1))
-    //        .ReturnsAsync(entList.ToList()
-    //        .Find(e => e.Id == 10));
+        mockEnt
+            .Setup(x => x.FindAsync(1))
+            .ReturnsAsync(entList.ToList()
+            .Find(e => e.Id == 10));
 
-    //    _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
+        _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
 
-    //    _mockMapper.Setup(x => x.Map<Article>(firstEntity)).Returns(() => null);
+        _mockMapper.Setup(x => x.Map<Article>(firstEntity)).Returns(() => null);
 
-    //    var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
+        var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
 
-    //    // act
-    //    var result = await service.GetById(1);
+        // act
+        var result = await service.GetById(1);
 
-    //    // assert
-    //    result.Should().BeNull();
+        // assert
+        result.Should().BeNull();
 
-    //    _mockMapper.Verify(m => m.Map<Article>(firstEntity), Times.Never());
-    //    _mockApiContext.Verify(c => c.Articles.FindAsync(1), Times.Once());
-    //}
-    //#endregion
+        _mockMapper.Verify(m => m.Map<Article>(firstEntity), Times.Never());
+        _mockApiContext.Verify(c => c.Articles.FindAsync(1), Times.Once());
+    }
+    #endregion
 
-    //#region GetAll Test
+    #region GetAll Tests
 
-    //[Fact]
-    //public async Task GetAll_Exists_ReturnsListOfDtos()
-    //{
-    //    // arrange
-    //    var dtos = GetTestDtos(1, 6);
+    [Fact]
+    public async Task GetAll_Exists_ReturnsListOfDtos()
+    {
+        // arrange
+        var dtos = GetTestDtos(1, 6);
 
-    //    var entList = GetTestEntities(1, 6);
+        var entList = GetTestEntities(1, 6);
 
-    //    var mockEnt = entList.AsQueryable().BuildMockDbSet();
+        var mockEnt = entList.AsQueryable().BuildMockDbSet();
 
-    //    _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
+        _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
 
-    //    _mockMapper.Setup(x => x.Map<IList<Article>>(entList)).Returns(dtos);
+        _mockMapper.Setup(x => x.Map<IList<Article>>(entList)).Returns(dtos);
 
-    //    var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
+        var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
 
-    //    // act
-    //    var result = await service.GetAll();
+        // act
+        var result = await service.GetAll();
 
-    //    // assert
-    //    result.Should().NotBeNull();
-    //    result.Count().Should().Be(5);
-    //    result.Should().BeOfType<List<Article>>();
+        // assert
+        result.Should().NotBeNull();
+        result.Count().Should().Be(5);
+        result.Should().BeOfType<List<Article>>();
 
-    //    result.Should().BeSameAs(dtos);
+        result.Should().BeSameAs(dtos);
 
-    //    _mockMapper.Verify(m => m.Map<IList<Article>>(entList), Times.Once());
-    //}
+        _mockMapper.Verify(m => m.Map<IList<Article>>(entList), Times.Once());
+    }
 
+    [Fact]
+    public async Task GetAll_NoneExist_ReturnsEmptyList()
+    {
+        // arrange
+        var entList = new List<ArticleEntity>();
 
-    //[Fact]
-    //public async Task GetAll_NoneExist_ReturnsEmptyList()
-    //{
-    //    // arrange
-    //    var entList = new List<ArticleEntity>();
+        var mockEnt = entList.AsQueryable().BuildMockDbSet();
 
-    //    var mockEnt = entList.AsQueryable().BuildMockDbSet();
+        _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
 
-    //    _mockApiContext.Setup(x => x.Articles).Returns(mockEnt.Object);
+        _mockMapper.Setup(x => x.Map<IList<Article>>(It.IsAny<ArticleEntity>)).Returns(() => null);
 
-    //    _mockMapper.Setup(x => x.Map<IList<Article>>(It.IsAny<ArticleEntity>)).Returns(() => null);
+        var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
 
-    //    var service = new ArticleService(_mockApiContext.Object, _mockMapper.Object);
+        // act
+        var result = await service.GetAll();
 
-    //    // act
-    //    var result = await service.GetAll();
+        // assert
+        result.Should().BeNull();
 
-    //    // assert
-    //    result.Should().BeNull();
+        _mockMapper.Verify(m => m.Map<IList<Article>>(It.IsAny<ArticleEntity>), Times.Never());
+    }
+    #endregion
 
-    //    _mockMapper.Verify(m => m.Map<IList<Article>>(It.IsAny<ArticleEntity>), Times.Never());
-    //}
-    //#endregion
-
-    //[Fact]
-    //public async Task Post_ReturnsNewArticle()
-    //{
-    //    var dto = GetTestDtos(1, 2).First();
-
-    //    var articleRequest = new ArticleRequest(
-
-    //        dto.Title,
-    //        dto.Content,
-    //        dto.PublishedAt,
-    //        dto.MyNumber
-    //    );
-
-    //    var mapper = MappingProfile();
-
-    //    var dbContextOptions = SetUpDbContext();
-
-    //    using (var dbContext = new ApiContext(dbContextOptions))
-    //    {
-    //        var articleController = new ArticleService(dbContext, mapper);
-
-    //        // Act
-    //        var result = await articleController.Post(articleRequest);
-
-    //        // Assert
-    //        result.Should().BeOfType<Article>();
-    //        result.Should().BeEquivalentTo(dto);
-    //        result.Id.Should().Be(1);
-    //        result.Title.Should().Be(dto.Title);
-    //        result.Content.Should().Be(dto.Content);
-    //        result.PublishedAt.Should().Be(dto.PublishedAt);
-    //        result.MyNumber.Should().Be(dto.MyNumber);
-    //    }
-    //}
-
+    #region Post Tests
     [Fact]
     public async Task Post_ReturnNewArticle()
     {
@@ -224,24 +183,30 @@ public class ArticleServiceTests : IDisposable
             MyNumber = dto.MyNumber
         };
 
-        //var mapper = MappingProfile();
+        var expectedArticle = new Article
+        {
+            Id = 1,
+            Title = entity.Title,
+            Content = entity.Content,
+            PublishedAt = entity.PublishedAt,
+            MyNumber = entity.MyNumber
+        };
 
-        _mockMapper.Setup(x => x.Map<ArticleEntity>(dto)).Returns(entity);
-        _mockMapper.Setup(x => x.Map<Article>(It.IsAny<ArticleEntity>)).Returns(It.IsAny<Article>);
+        _mockMapper.Setup(x => x.Map<ArticleEntity>(It.IsAny<Article>())).Returns(entity);
+        _mockMapper.Setup(x => x.Map<Article>(It.IsAny<ArticleEntity>())).Returns(expectedArticle);
 
         var service = new ArticleService(_context, _mockMapper.Object);
 
         var result = await service.Post(articleRequest);
 
         result.Should().BeOfType<Article>();
-        result.Should().BeEquivalentTo(dto);
-        //result.Id.Should().Be(1);
+        result.Id.Should().Be(1);
         result.Title.Should().Be(dto.Title);
         result.Content.Should().Be(dto.Content);
         result.PublishedAt.Should().Be(dto.PublishedAt);
         result.MyNumber.Should().Be(dto.MyNumber);
-
     }
+    #endregion
 
 
     #region Private Methods
