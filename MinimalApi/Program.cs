@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using MinimalApiDemo.Infastructure;
 using MinimalApiDemo.Models;
 using MinimalApiDemo.Services;
+using MinimalApiDemo.Validation;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApiContext>(opt => opt.UseInMemoryDatabase("api"));
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(ArticleValidator));
 
 // JWT Set Up
 builder.Services.AddAuthentication(opt =>
@@ -117,6 +120,27 @@ app.MapPost("/articles", async (
     IArticleService articleService) =>
 await articleService.Post(article))
 .RequireAuthorization();
+
+app.MapPost("/articlesWithValidation", async (
+    Article article) =>
+{
+    return Results.Ok("Cool");
+}).AddEndpointFilter(async (context, next) =>
+{
+    var article = context.Arguments[0] as Article;
+    var validator = context.HttpContext.RequestServices.GetService<ArticleValidator>();
+    if (validator != null && article != null)
+    {
+        var validation = await validator.ValidateAsync(article);
+        if (validation.IsValid)
+        {
+            return await next(context);
+        }
+
+        return Results.ValidationProblem(validation.ToDictionary());
+    }
+    return await next(context);
+});
 
 app.MapDelete("articles/{id}", async (
     int id,
