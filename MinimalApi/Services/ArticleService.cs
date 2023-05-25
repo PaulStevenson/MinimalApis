@@ -1,13 +1,14 @@
-﻿using System;
+﻿using System.Reflection;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MinimalApiDemo.Entities;
 using MinimalApiDemo.Infastructure;
 using MinimalApiDemo.Models;
 
 namespace MinimalApiDemo.Services
 {
-	public class ArticleService : IArticleService
+    public class ArticleService : IArticleService
     {
         private readonly ApiContext _context;
         private readonly IMapper _mapper;
@@ -36,7 +37,7 @@ namespace MinimalApiDemo.Services
 
         public async Task<IResult> Post(ArticleRequest article)
         {
-            var title = String.IsNullOrEmpty(article.Title) ? "Default Title" : article.Title;
+            var title = article.Title.IsNullOrEmpty() ? "Default Title" : article.Title;
 
             var newArticle = new Article
             {
@@ -46,6 +47,17 @@ namespace MinimalApiDemo.Services
                 MyNumber = article.MyNumber
             };
 
+            var entity = _mapper.Map<ArticleEntity>(newArticle);
+
+            var createdArticle = _context.Articles.Add(entity);
+
+            await _context.SaveChangesAsync();
+
+            return Results.Created($"articles/{createdArticle.Entity.Id}", createdArticle.Entity);
+        }
+
+        public async Task<IResult> PostWithValidation(Article newArticle)
+        {
             var entity = _mapper.Map<ArticleEntity>(newArticle);
 
             var createdArticle = _context.Articles.Add(entity);
