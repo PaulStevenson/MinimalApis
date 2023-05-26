@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace MinimalApiDemo.Validation
+﻿namespace MinimalApiDemo.Validation
 {
     public class ValidationFilter<T> : IEndpointFilter
     {

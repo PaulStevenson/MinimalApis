@@ -13,7 +13,7 @@ namespace MinimalApiDemo.Services
 
         Task<Article> PostWithValidation(Article newArticle);
 
-        Task<Article> Delete(int id);
+        Task Delete(int id);
 
 		Task<Article> Put(int id, ArticleRequest article);
     }

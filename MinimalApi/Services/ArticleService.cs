@@ -66,15 +66,13 @@ namespace MinimalApiDemo.Services
             return response;
         }
 
-        public async Task<Article> Delete(int id)
+        public async Task Delete(int id)
         {
             var article = await _context.Articles.FindAsync(id);
 
-            var response = _context.Articles.Remove(article);
+            _context.Articles.Remove(article);
 
             await _context.SaveChangesAsync();
-
-            return null;
         }
 
         public async  Task<Article> Put(int id, ArticleRequest article)

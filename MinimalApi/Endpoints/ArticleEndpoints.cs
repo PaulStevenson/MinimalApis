@@ -75,7 +75,7 @@ namespace MinimalApiDemo.Endpoints
 
         private static async Task<IResult> DeleteArticle(int id, IArticleService service)
         {
-            var response = await service.Delete(id);
+            await service.Delete(id);
 
             return Results.NoContent();
 

@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using MinimalApiDemo.Models;
-
-namespace MinimalApiDemo.Validation
+﻿namespace MinimalApiDemo.Validation
 {
     public class Validators : AbstractValidator<Article>
     {
