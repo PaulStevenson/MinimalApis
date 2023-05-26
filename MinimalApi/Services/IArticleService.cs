@@ -11,11 +11,11 @@ namespace MinimalApiDemo.Services
 
         Task<Article> Post(ArticleRequest article);
 
-		Task<IResult> PostWithValidation(Article newArticle);
+        Task<Article> PostWithValidation(Article newArticle);
 
-        Task<IResult> Delete(int id);
+        Task<Article> Delete(int id);
 
-		Task<IResult> Put(int id, ArticleRequest article);
+		Task<Article> Put(int id, ArticleRequest article);
     }
 }
 

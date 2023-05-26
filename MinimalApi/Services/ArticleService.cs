@@ -1,10 +1,5 @@
-﻿using System.Reflection;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using AutoMapper;
 using MinimalApiDemo.Entities;
-using MinimalApiDemo.Infastructure;
-using MinimalApiDemo.Models;
 
 namespace MinimalApiDemo.Services
 {
@@ -58,7 +53,7 @@ namespace MinimalApiDemo.Services
             return response;
         }
 
-        public async Task<IResult> PostWithValidation(Article newArticle)
+        public async Task<Article> PostWithValidation(Article newArticle)
         {
             var entity = _mapper.Map<ArticleEntity>(newArticle);
 
@@ -66,32 +61,26 @@ namespace MinimalApiDemo.Services
 
             await _context.SaveChangesAsync();
 
-            return Results.Created($"articles/{createdArticle.Entity.Id}", createdArticle.Entity);
+            var response = _mapper.Map<Article>(createdArticle.Entity);
+
+            return response;
         }
 
-        public async Task<IResult> Delete(int id)
+        public async Task<Article> Delete(int id)
         {
             var article = await _context.Articles.FindAsync(id);
 
-            if (article == null)
-            {
-                return Results.NotFound($"Cannot by article {id}");
-            }
-
-            _context.Articles.Remove(article);
+            var response = _context.Articles.Remove(article);
 
             await _context.SaveChangesAsync();
 
-            return Results.NoContent();
+            return null;
         }
 
-        public async  Task<IResult> Put(int id, ArticleRequest article)
+        public async  Task<Article> Put(int id, ArticleRequest article)
         {
             var articleToUpdate = await _context.Articles.FindAsync(id);
-
-            if (articleToUpdate == null)
-                return Results.NotFound();
-
+            
             if (article.Title != null)
                 articleToUpdate.Title = article.Title;
 
@@ -101,9 +90,15 @@ namespace MinimalApiDemo.Services
             if (article.PublishedAt != null)
                 articleToUpdate.PublishedAt = article.PublishedAt;
 
+            if (articleToUpdate.MyNumber != null)
+                articleToUpdate.MyNumber = article.MyNumber;
+
             await _context.SaveChangesAsync();
 
-            return Results.Ok(articleToUpdate);
+            var updatedArticle = await _context.Articles.FindAsync(id);
+            var response = _mapper.Map<Article>(updatedArticle);
+
+            return response;
         }
     }
 }
